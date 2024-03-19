@@ -115,13 +115,41 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """ Create an object of any class"""
+        splited = []
+        c_name = ""
+        if args:
+            splited = args.split(' ')
+            c_name = splited[0]
         if not args:
             print("** class name missing **")
             return
-        elif args not in HBNBCommand.classes:
+        elif c_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        new_instance = HBNBCommand.classes[args]()
+        new_instance = HBNBCommand.classes[c_name]()
+        if len(splited) > 1:
+            for param in splited[1:]:
+                if "=" not in param:
+                    continue
+                name, value = param.split('=')
+                val = value.strip('"').replace('_', ' ')
+                if '"' in value:
+                    val = value.strip('"').replace('_', ' ')
+                elif '.' in value:
+                    try:
+                        val = float(value)
+                    except ValueError:
+                        pass
+                elif 'True' == value:
+                    val = True
+                elif 'False' == value:
+                    val = False
+                else:
+                    try:
+                        val = int(value)
+                    except ValueError:
+                        pass
+                setattr(new_instance, name, val)
         storage.save()
         print(new_instance.id)
         storage.save()
@@ -319,6 +347,7 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
