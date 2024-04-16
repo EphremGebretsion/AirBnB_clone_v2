@@ -36,9 +36,9 @@ sudo ln -f -s /data/web_static/releases/test/ /data/web_static/current
 sudo chown -R 'ubuntu':'ubuntu' /data/
 mypath='/data/web_static/current'
 myurl='location /hbnb_static'
-if ! grep -q "$myurl"
+if ! grep -q "$myurl" /etc/nginx/sites-available/default
 then
 	sudo sed -i "s-server_name _;-server_name _;\n\t$myurl {\n\t\t alias $mypath;\n\t}-" /etc/nginx/sites-available/default
 fi
-service nginx restart &> /dev/null
+sudo service nginx restart &> /dev/null
 exit 0
