@@ -20,7 +20,7 @@ def hbnb():
 def croute(text):
     """displays C <tect> the url after c/"""
     tx = text.replace("_", " ")
-    return f"C {text}"
+    return f"C {tx}"
 
 
 if __name__ == "__main__":
