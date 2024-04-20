@@ -19,6 +19,7 @@ def hbnb():
 @app.route("/c/<text>", strict_slashes=False)
 def croute(text):
     """displays C <tect> the url after c/"""
+    tx = text.replace("_", " ")
     return f"C {text}"
 
 
