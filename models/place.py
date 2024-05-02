@@ -21,3 +21,13 @@ class Place(BaseModel, Base):
     amenity_ids = []
     user = relationship("User")
     cities = relationship("City")
+    reviews = relationship("Review", cascade="delete")
+    @property
+    def reviews(self):
+        from models import storage
+        from models.reviews import Review
+        res = []
+        for rev in storage.all(Review).values():
+            if rev.place_id == self.id:
+                res.append(rev)
+        return res
