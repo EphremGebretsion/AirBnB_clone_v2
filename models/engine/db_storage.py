@@ -12,12 +12,15 @@ from models.user import User
 from os import getenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
+
+
 class DBStorage():
     """
     class used to manage and use database as a storage
     """
     __engine = None
     __session = None
+
     def __init__(self):
         """initializing the class DBStorage"""
         dialect = 'mysql'
@@ -31,7 +34,6 @@ class DBStorage():
         self.__engine = create_engine(dbURL, pool_pre_ping=True)
         if hbnb_env == "test":
             Base.metadata.drop_all(self.__engine)
-
 
     def all(self, cls=None):
         """
@@ -70,6 +72,7 @@ class DBStorage():
     def reload(self):
         """creates all tables in the database"""
         Base.metadata.create_all(self.__engine)
-        session_factory = sessionmaker(bind=self.__engine, expire_on_commit=False)
+        session_factory = sessionmaker(bind=self.__engine,
+                                       expire_on_commit=False)
         Session = scoped_session(session_factory)
         self.__session = Session()
