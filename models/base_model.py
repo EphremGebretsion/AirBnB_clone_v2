@@ -11,7 +11,8 @@ Base = declarative_base()
 
 class BaseModel:
     """A base class for all hbnb models"""
-    id = Column(String(60), nullable=False, primary_key=True, unique=True)
+    id = Column(String(60), nullable=False, primary_key=True,
+                default=uuid.uuid4, unique=True)
     created_at = Column(DateTime, default=datetime.utcnow(), nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow(), nullable=False)
 
@@ -23,11 +24,20 @@ class BaseModel:
             self.created_at = datetime.utcnow()
             self.updated_at = datetime.utcnow()
         else:
-            kwargs['updated_at'] = datetime.strptime(kwargs['updated_at'],
-                                                     '%Y-%m-%dT%H:%M:%S.%f')
-            kwargs['created_at'] = datetime.strptime(kwargs['created_at'],
-                                                     '%Y-%m-%dT%H:%M:%S.%f')
-            del kwargs['__class__']
+            if 'updated_at' not in kwargs.keys():
+                self.updated_at = datetime.utcnow()
+            else:
+                kwargs['updated_at'] = datetime.strptime(
+                                       kwargs['updated_at'],
+                                       '%Y-%m-%dT%H:%M:%S.%f')
+            if 'created_at' not in kwargs.keys():
+                self.created_at = datetime.utcnow()
+            else:
+                kwargs['created_at'] = datetime.strptime(
+                                       kwargs['created_at'],
+                                       '%Y-%m-%dT%H:%M:%S.%f')
+            if '__class__' in kwargs.keys():
+                del kwargs['__class__']
             self.__dict__.update(kwargs)
             for key, value in kwargs.items():
                 if (key == 'updated_at' or key == 'created_at'):

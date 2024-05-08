@@ -31,9 +31,9 @@ class DBStorage():
         db = getenv("HBNB_MYSQL_DB", default="hbnb_dev_db")
         hbnb_env = getenv("HBNB_ENV")
         dbURL = f"{dialect}+{driver}://{user}:{pswd}@{host}/{db}"
-        self.__engine = create_engine(dbURL, pool_pre_ping=True)
+        DBStorage.__engine = create_engine(dbURL, pool_pre_ping=True)
         if hbnb_env == "test":
-            Base.metadata.drop_all(self.__engine)
+            Base.metadata.drop_all(DBStorage.__engine)
 
     def all(self, cls=None):
         """
@@ -45,12 +45,12 @@ class DBStorage():
         res = {}
         if not cls:
             for icls in all_cls:
-                all_obj = self.__session.query(icls).all()
+                all_obj = DBStorage.__session.query(icls).all()
                 for obj in all_obj:
                     key = obj.to_dict()['__class__'] + '.' + obj.id
                     res[key] = obj
             return res
-        all_obj = self.__session.query(cls).all()
+        all_obj = DBStorage.__session.query(cls).all()
         for obj in all_obj:
             key = obj.to_dict()['__class__'] + '.' + obj.id
             res[key] = obj
@@ -58,21 +58,21 @@ class DBStorage():
 
     def new(self, obj):
         """adds obj to the session"""
-        self.__session.add(obj)
+        DBStorage.__session.add(obj)
 
     def save(self):
         """commits all the changes made"""
-        self.__session.commit()
+        DBStorage.__session.commit()
 
     def delete(self, obj=None):
         """delets obj from database"""
         if obj:
-            self.__session.delete(obj)
+            DBStorage.__session.delete(obj)
 
     def reload(self):
         """creates all tables in the database"""
-        Base.metadata.create_all(self.__engine)
-        session_factory = sessionmaker(bind=self.__engine,
+        Base.metadata.create_all(DBStorage.__engine)
+        session_factory = sessionmaker(bind=DBStorage.__engine,
                                        expire_on_commit=False)
         Session = scoped_session(session_factory)
-        self.__session = Session()
+        DBStorage.__session = Session()
